@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHESS BOT</title>
+
+    <!-- <link href="../static/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../static/css/chessboard-1.0.0.min.css" /> -->
+    <link
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/chessboard-1.0.0.min.css') }}"
+    />
+
+    <style>
+      body {
+        overflow: scroll;
+      }
+      h1 {
+        font-size: 70px;
+        color: darkred;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="text-center my-5">C H E S S - R O B O T I C A</h1>
+    </header>
+
+    <section class="mt-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h4>Current Board</h4>
+            <div
+              class="mx-auto"
+              id="board"
+              style="width: 400px; height: 400px; margin-top: 40px"
+            ></div>
+          </div>
+
+          <div class="col-md-6">
+            <h4>Moves</h4>
+            <div style="margin-top: 40px">
+              <p>White: {{white_moves}}</p>
+              <p><b>Black: {{black_moves}}</b></p>
+            </div>
+
+            <h4 class="mt-5 mb-4">Prompts</h4>
+            <h2 class="text-danger">{{prompts}}</h2>
+
+            {% if prompts == 'INVALID!! MAKE A VALID MOVE.' %}
+            <form action="/" method="post">
+              <input class="btn btn-danger" type="submit" value="TRY FIXING" />
+            </form>
+            {% elif prompts == 'No moves identified. Make a move!' %}
+            <form action="/" method="post">
+              <input class="btn btn-danger" type="submit" value="TRY FIXING" />
+            </form>
+
+            {% endif %}
+
+            <h4 class="mt-5 mb-4">Timer</h4>
+            <p>
+              White timer : &nbsp<span id="white-timer">{{white_time}}</span>
+            </p>
+            <p>
+              Black timer &nbsp: &nbsp<span id="black-timer"
+                >{{black_time}}</span
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- <script src="../static/js/jquery-3.5.1.min.js"></script>
+    <script src="../static/js/chessboard-1.0.0.min.js"></script> -->
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chessboard-1.0.0.min.js') }}"></script>
+
+    <script>
+      fen_string = "{{fen_string}}";
+      //fen_string = "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R";
+      var board = Chessboard("board", fen_string);
+
+      var countDownDate = new Date().getTime() + "{{ white_time }}" * 1000;
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      document.getElementById("white-timer").innerHTML =
+        minutes + "m " + seconds + "s ";
+
+      var countDownDate = new Date().getTime() + "{{ black_time }}" * 1000;
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      document.getElementById("black-timer").innerHTML =
+        minutes + "m " + seconds + "s ";
+    </script>
+
+    <script>
+      var status = "{{ is_white_timer|lower }}";
+
+      if (status == "true") {
+        var countDownDate = new Date().getTime() + "{{ white_time }}" * 1000;
+        setInterval(function () {
+          var now = new Date().getTime();
+          var distance = countDownDate - now;
+
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          document.getElementById("white-timer").innerHTML =
+            minutes + "m " + seconds + "s ";
+        }, 1000);
+      } else {
+        var countDownDate = new Date().getTime() + "{{ black_time }}" * 1000;
+        setInterval(function () {
+          var now = new Date().getTime();
+          var distance = countDownDate - now;
+
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          document.getElementById("black-timer").innerHTML =
+            minutes + "m " + seconds + "s ";
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
